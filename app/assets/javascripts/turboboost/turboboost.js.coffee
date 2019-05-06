@@ -48,6 +48,7 @@ turboboostFormError = (e, errors) ->
 
 turboboostComplete = (e, resp) ->
   $el = $(@)
+  resp = resp || e.detail[0]
   isForm = @nodeName is "FORM"
   status = parseInt(resp.status)
 
