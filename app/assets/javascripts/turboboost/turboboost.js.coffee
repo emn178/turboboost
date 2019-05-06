@@ -73,12 +73,13 @@ turboboostComplete = (e, resp) ->
     $inserted.trigger "turboboost:complete"
 
 turboboostBeforeSend = (e, xhr, settings) ->
+  xhr = xhr || e.detail[0]
   xhr.setRequestHeader('X-Turboboost', '1')
   isForm = @nodeName is "FORM"
   return e.stopPropagation() unless isForm
   $el = $(@)
   disableForm $el if isForm and Turboboost.handleFormDisabling
-  if settings.type is "GET" and !$el.attr('data-no-turboboost-redirect')
+  if settings and settings.type is "GET" and !$el.attr('data-no-turboboost-redirect')
     Turbolinks.visit [@action, $el.serialize()].join("?")
     return false
 
