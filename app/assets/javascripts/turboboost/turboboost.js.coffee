@@ -11,11 +11,11 @@ formProcessingClass = 'turboboost-form-processing'
 
 enableForm = ($form) ->
   $form.removeClass(formProcessingClass)
-  $form.find("[type='submit']").removeAttr('disabled').data('turboboostDisabled', false)
+  $form.find("[type='submit']").removeAttr('disabled').attr('data-turboboostDisabled', false)
 
 disableForm = ($form) ->
   $form.addClass(formProcessingClass)
-  $form.find("[type='submit']").attr('disabled', 'disabled').data('turboboostDisabled', true)
+  $form.find("[type='submit']").attr('disabled', 'disabled').attr('data-turboboostDisabled', true)
 
 tryJSONParse = (str) ->
   try
@@ -79,7 +79,8 @@ turboboostBeforeSend = (e, xhr, settings) ->
   return e.stopPropagation() unless isForm
   $el = $(@)
   disableForm $el if isForm and Turboboost.handleFormDisabling
-  if settings and settings.type is "GET" and !$el.attr('data-no-turboboost-redirect')
+  method = settings and settings.type || this.method.toUpperCase()
+  if method is "GET" and !$el.attr('data-no-turboboost-redirect')
     Turbolinks.visit [@action, $el.serialize()].join("?")
     return false
 
@@ -114,4 +115,4 @@ $(document)
   .on("ajax:beforeSend", turboboostable, turboboostBeforeSend)
   .on("ajax:complete", turboboostable, turboboostComplete)
   .on("turboboost:error", "form#{turboboostable}", turboboostFormError)
-  .on("page:restore", maybeReenableForms)
+  .on("page:restore turbolinks:load", maybeReenableForms)
